@@ -28,9 +28,7 @@ export default function IframeSearchPage() {
   return (
     <div className='min-h-screen p-4 md:p-6'>
       <div className='mx-auto max-w-6xl'>
-        <h1 className='text-xl md:text-2xl font-semibold mb-3'>
-          Iframe 테스트 검색
-        </h1>
+        <h1 className='text-xl md:text-2xl font-semibold mb-3'>10🦆10🦆</h1>
 
         {/* 검색창 */}
         <form onSubmit={(e) => e.preventDefault()} className='flex gap-2 mb-4'>
