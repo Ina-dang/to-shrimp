@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🕵️‍♂️ from-shrimp 통합 검색 프로젝트
 
-## Getting Started
+> 여러 취향 사이트들의 검색 결과를 한눈에 모아볼 수 있는 **Next.js 기반 웹 프로젝트**
 
-First, run the development server:
+## 🚀 기능 개요
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+1. **메인 페이지 (`/`)**
+
+   - 검색어를 입력하면 각 사이트별 크롤러가 실행되어 결과를 가져옵니다.
+   - 결과는 통합된 리스트 형태로 화면에 표시됩니다.
+   - _(현재는 미완성 상태)_
+
+2. **Iframe 페이지 (`/iframes`)**
+   - 각 사이트를 `iframe`으로 불러옵니다.
+   - 상단 검색창에서 검색어를 입력하면 각 iframe의 `src`가 변경되어 해당 사이트의 검색 결과 페이지를 그대로 보여줍니다.
+   - 사이트 이동 없이 한 화면에서 여러 검색 결과를 동시에 확인할 수 있습니다.
+
+## 📂 프로젝트 구조
+
+```
+src/
+├─ app/
+│ ├─ page.tsx # 메인 통합 검색 페이지
+│ ├─ iframes/page.tsx # Iframe 검색 페이지
+│ └─ api/search/ # (WIP) 사이트별 크롤링 API
+│
+├─ lib/
+│ ├─ parsers/ # 사이트별 HTML 파서 (Cheerio 기반)
+│ ├─ fetch.ts # HTML fetch & retry 유틸
+│ ├─ url.ts # URL 처리 유틸
+│ └─ types.ts # SearchItem, SiteParser 타입 정의
+│
+└─ assets/ # 정적 자원
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ⚙️ 기술 스택
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Framework**: [Next.js](https://nextjs.org/)
+- **Scraping**: [Cheerio](https://cheerio.js.org/)
+- **Language**: TypeScript
+- **스타일링**: Tailwind CSS
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ 설치 & 실행
 
-## Learn More
+```bash
+# 의존성 설치
+npm install
 
-To learn more about Next.js, take a look at the following resources:
+# 개발 서버 실행
+npm run dev
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# 브라우저에서 확인
+http://localhost:3000
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## ✅ 진행 상황
 
-## Deploy on Vercel
+- Next.js 프로젝트 셋업
+- Iframe 검색 페이지 구현 (`/iframes`)
+- 각 사이트별 크롤러 구현
+- 통합 검색 결과 페이지 완성
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📌 참고
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 검색 대상 사이트
+
+- HeyPrice
+- JapanGift
+- Japan24
+
+## 🧰 사용한 주요 라이브러리
+
+- `cheerio` : HTML 파싱
+- `p-limit` : 동시 요청 제한
+- `undici` : HTTP 요청
+- `zod` : 데이터 검증
+- `tailwindcss` : 스타일링
