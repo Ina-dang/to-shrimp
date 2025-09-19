@@ -9,6 +9,20 @@ import { NextRequest } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
+interface Row {
+  href: string;
+  text: string;
+  price: string;
+  cls: string;
+}
+
+interface SiteResult {
+  ok: boolean;
+  count?: number;
+  samples?: Row[];
+  error?: string;
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const q = (searchParams.get('q') || '').trim();
@@ -35,12 +49,14 @@ export async function GET(req: NextRequest) {
     },
   ] as const;
 
-  const results: Record<string, any> = {};
+  const results: Record<string, SiteResult> = {};
+
   for (const site of sites) {
     try {
       const html = await withRetry(() => fetchHtml(site.url));
       const $ = cheerio.load(html);
-      const rows: any[] = [];
+      const rows: Row[] = [];
+
       $('.stype_list a[href]').each((_, el) => {
         const a = $(el);
         const href = a.attr('href') || '';
@@ -64,9 +80,11 @@ export async function GET(req: NextRequest) {
         });
         if (rows.length >= 60) return false;
       });
+
       results[site.key] = { ok: true, count: rows.length, samples: rows };
-    } catch (e: any) {
-      results[site.key] = { ok: false, error: String(e?.message || e) };
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      results[site.key] = { ok: false, error: msg };
     }
   }
 

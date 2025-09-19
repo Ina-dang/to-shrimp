@@ -8,21 +8,39 @@ import { NextRequest } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
+// 각 사이트의 HTML 검사 결과 타입 정의
+interface SiteDebugResult {
+  ok: boolean;
+  length?: number;
+  head?: string;
+  error?: string;
+}
+
+interface DebugOutput {
+  q: string;
+  urls: Record<string, string>;
+  results: Record<string, SiteDebugResult>;
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const q = (searchParams.get('q') || '').trim();
-  if (!q)
+
+  if (!q) {
     return new Response(JSON.stringify({ error: 'q required' }), {
       status: 400,
+      headers: { 'content-type': 'application/json' },
     });
+  }
 
-  const urls = {
+  const urls: Record<string, string> = {
     heyprice: buildHeypriceUrl(q),
     japangift: buildJapangiftUrl(q),
     japan24: buildJapan24Url(q),
   };
 
-  const out: any = { q, urls, results: {} };
+  const out: DebugOutput = { q, urls, results: {} };
+
   for (const [key, url] of Object.entries(urls)) {
     try {
       const html = await withRetry(() => fetchHtml(url));
@@ -31,10 +49,12 @@ export async function GET(req: NextRequest) {
         length: html.length,
         head: html.slice(0, 400),
       };
-    } catch (e: any) {
+    } catch (e: unknown) {
+      // unknown 타입으로 잡고, Error인지 확인 후 처리
+      const msg = e instanceof Error ? e.message : String(e);
       out.results[key] = {
         ok: false,
-        error: String(e?.message || e),
+        error: msg,
       };
     }
   }

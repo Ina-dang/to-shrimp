@@ -16,7 +16,6 @@ export async function GET(req: NextRequest) {
   const results = await Promise.all(
     parsers.map((p) =>
       limit(async () => {
-        const url = (p as any).search ? undefined : undefined;
         // Rebuild URLs by calling the parser's private builder indirectly via search page HTML fetch
         // We rely on each parser's search() to compute the URL, but also fetch raw HTML separately to inspect.
         // Run the parser normally
